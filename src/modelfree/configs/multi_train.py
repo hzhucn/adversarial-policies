@@ -6,9 +6,9 @@ import itertools
 import numpy as np
 from ray import tune
 
-from modelfree import gym_compete_conversion
+from modelfree.envs import gym_compete
 
-BANSAL_ENVS = ['multicomp/' + env for env in gym_compete_conversion.POLICY_STATEFUL.keys()]
+BANSAL_ENVS = ['multicomp/' + env for env in gym_compete.POLICY_STATEFUL.keys()]
 BANSAL_ENVS += ['multicomp/SumoHumansAutoContact-v0', 'multicomp/SumoAntsAutoContact-v0']
 BANSAL_GOOD_ENVS = [  # Environments well-suited to adversarial attacks
     'multicomp/KickAndDefend-v0',
@@ -16,7 +16,7 @@ BANSAL_GOOD_ENVS = [  # Environments well-suited to adversarial attacks
     'multicomp/SumoAntsAutoContact-v0',
     'multicomp/YouShallNotPassHumans-v0',
 ]
-LSTM_ENVS = [env for env in BANSAL_ENVS if gym_compete_conversion.is_stateful(env)]
+LSTM_ENVS = [env for env in BANSAL_ENVS if gym_compete.is_stateful(env)]
 
 TARGET_VICTIM = collections.defaultdict(lambda: 1)
 TARGET_VICTIM['multicomp/KickAndDefend-v0'] = 2
@@ -32,7 +32,7 @@ VICTIM_INDEX.update({
 def _env_victim(envs=None):
     if envs is None:
         envs = BANSAL_GOOD_ENVS
-    env_and_victims = [[(env, i + 1) for i in range(gym_compete_conversion.num_zoo_policies(env))]
+    env_and_victims = [[(env, i + 1) for i in range(gym_compete.num_zoo_policies(env))]
                        for env in envs]
     return list(itertools.chain(*env_and_victims))
 
@@ -266,7 +266,7 @@ def make_configs(multi_train_ex):
 
     @multi_train_ex.named_config
     def gym_compete_from_scratch(train):
-        """Use the policy architecture in gym_compete, but train from random initialization
+        """Use the policy architecture in gym_compete, but training from random initialization
            (i.e. not loading one of their zoo agents). There's no reason to actually do this
            (there are nicer implementations of these architectures in Stable Baselines),
            but it confirms that training works, and together with `finetune_nolearn` gives

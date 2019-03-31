@@ -1,4 +1,4 @@
-"""Helper functions for multi_train.py executed on worker nodes using Ray Tune.
+"""Helper functions for training.py executed on worker nodes using Ray Tune.
 
 It's important these are all pickleable."""
 
@@ -49,14 +49,14 @@ def _update(d, u):
 
 
 def train_rl(base_config, tune_config, reporter):
-    """Run a modelfree.train experiment with specified config, logging to reporter.
+    """Run a modelfree.training experiment with specified config, logging to reporter.
 
     :param base_config: (dict) default config
     :param tune_config: (dict) overrides values in base_config
     :param reporter: (ray.tune.StatusReporter) Ray Tune internal logger."""
     # train_ex is not pickleable, so we cannot close on it.
     # Instead, import inside the function.
-    from modelfree.train import train_ex
+    from modelfree.training import train_ex
 
     config = dict(base_config)
     tune_config = _flatten_config(tune_config)
@@ -70,7 +70,7 @@ def train_rl(base_config, tune_config, reporter):
     # We're breaking the Sacred interface by running an experiment from within another experiment.
     # This is the best thing we can do, since we need to run the experiment with varying configs.
     # Just be careful: this could easily break things.
-    observer = FileStorageObserver.create(osp.join('data', 'sacred', 'train'))
+    observer = FileStorageObserver.create(osp.join('data', 'sacred', 'training'))
     train_ex.observers.append(observer)
     train_ex.run(config_updates=config)
     reporter(done=True, **output_format.last_kvs)

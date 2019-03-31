@@ -9,9 +9,9 @@ from stable_baselines.common.vec_env.vec_normalize import VecNormalize
 import tensorflow as tf
 
 from aprl.envs.multi_agent import FakeSingleSpacesVec
-from modelfree.gym_compete_conversion import load_zoo_agent
-from modelfree.utils import (DummyModel, OpenAIToStablePolicy, PolicyToModel, RandomPolicy,
-                             ZeroPolicy)
+from modelfree.common.utils import (DummyModel, OpenAIToStablePolicy, PolicyToModel, RandomPolicy,
+                                    ZeroPolicy)
+from modelfree.envs.gym_compete import load_zoo_agent
 
 pylog = logging.getLogger('modelfree.policy_loader')
 

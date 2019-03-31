@@ -5,15 +5,16 @@ import os.path as osp
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
+from modelfree import training
 from modelfree.score_agent import score_agent, score_ex
-from modelfree.train import train, train_ex
+from modelfree.training import train_ex
 
 train_and_score = Experiment('train_and_score', ingredients=[train_ex, score_ex])
 
 
 @train_and_score.main
 def ppo_and_score():
-    model_path = train()
+    model_path = training()
     return score_agent(agent_b_type='ppo2', agent_b_path=model_path)
 
 

@@ -1,4 +1,4 @@
-"""Hyperparameter search for train.py using Ray Tune."""
+"""Hyperparameter search for training.py using Ray Tune."""
 
 import functools
 import getpass
@@ -15,9 +15,9 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
 from modelfree.configs.multi_train import make_configs
-from modelfree.logger import make_timestamp
-from modelfree.multi_train_worker import train_rl
+from modelfree.multi.train_worker import train_rl
 from modelfree.train import train_ex
+from modelfree.training.logger import make_timestamp
 
 multi_train_ex = Experiment('multi_train', ingredients=[train_ex])
 pylog = logging.getLogger('modelfree.multi_train')

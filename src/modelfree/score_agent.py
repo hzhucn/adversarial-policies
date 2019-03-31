@@ -7,9 +7,9 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
 from aprl.envs.multi_agent import make_dummy_vec_multi_env, make_subproc_vec_multi_env
-from modelfree.gym_compete_conversion import GymCompeteToOurs, game_outcome
-from modelfree.policy_loader import load_policy
-from modelfree.utils import VideoWrapper, make_env, simulate
+from modelfree.common.policy_loader import load_policy
+from modelfree.common.utils import VideoWrapper, make_env, simulate
+from modelfree.envs.gym_compete import GymCompeteToOurs, game_outcome
 
 score_ex = Experiment('score')
 

@@ -8,11 +8,11 @@ import os
 import pytest
 from ray.tune.trial import Trial
 
-from modelfree.multi_train import multi_train_ex
-from modelfree.policy_loader import AGENT_LOADERS
+from modelfree.common.policy_loader import AGENT_LOADERS
+from modelfree.multi.train import multi_train_ex
 from modelfree.score_agent import score_ex
-from modelfree.train import NO_VECENV, RL_ALGOS, train_ex
 from modelfree.train_and_score import train_and_score
+from modelfree.training import NO_VECENV, RL_ALGOS, train_ex
 
 EXPERIMENTS = [score_ex, train_and_score, train_ex]
 
