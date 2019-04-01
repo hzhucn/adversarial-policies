@@ -30,4 +30,5 @@ def score_worker(base_config, tune_config, reporter):
     score_ex.observers.append(observer)
     run = score_ex.run(config_updates=config)
 
-    reporter(done=True, **run.result)
+    idx = {k: v for k, v in config.items() if k.startswith('agent') or k == 'env_name'}
+    reporter(done=True, score=run.result, idx=idx)

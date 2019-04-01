@@ -166,7 +166,7 @@ def simulate(venv, policies, render=False):
     """
     observations = venv.reset()
     dones = [False] * venv.num_envs
-    states = [None for policy in policies]
+    states = [None for _ in policies]
 
     while True:
         if render:

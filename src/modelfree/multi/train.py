@@ -7,7 +7,7 @@ from ray import tune
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
-from modelfree.configs import multi_train
+from modelfree.configs.multi.train import make_configs
 from modelfree.multi import common
 from modelfree.multi.train_worker import train_rl
 from modelfree.train import train_ex
@@ -19,7 +19,7 @@ pylog = logging.getLogger('modelfree.multi_train')
 run = common.make_sacred(multi_train_ex, 'train_rl', train_rl)
 
 # Load named configs for individual experiments (these change a lot, so keep out of this file)
-multi_train.make_configs(multi_train_ex)
+make_configs(multi_train_ex)
 
 
 @multi_train_ex.config

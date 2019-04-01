@@ -58,6 +58,7 @@ def make_sacred(ex, worker_name, worker_fn):
         s3_bucket = None      # results storage on 'ec2' platform
         baremetal = {}        # config options for 'baremetal' platform
         ray_server = None     # if None, start cluster on local machine
+        upload_root = None    # root of upload_dir
         exp_name = 'default'  # experiment name
 
         _ = locals()  # quieten flake8 unused variable warning
@@ -77,8 +78,7 @@ def make_sacred(ex, worker_name, worker_fn):
             if s3_bucket is None:
                 s3_bucket = 'adversarial-policies'
 
-            spec = dict(spec)
-            spec['upload_dir'] = f's3://{s3_bucket}/multi_train'
+            spec['upload_dir'] = f's3://{s3_bucket}/'
             ray_server = 'localhost:6379'
 
         _ = locals()  # quieten flake8 unused variable warning
@@ -100,9 +100,8 @@ def make_sacred(ex, worker_name, worker_fn):
             if 'host' not in baremetal:
                 baremetal['host'] = f'{getpass.getuser()}@{socket.getfqdn()}'
             if 'dir' not in baremetal:
-                baremetal['dir'] = osp.abspath(osp.join(os.getcwd(), 'data', 'multi_train'))
+                baremetal['dir'] = osp.abspath(osp.join(os.getcwd(), 'data'))
 
-            spec = dict(spec)
             spec['upload_dir'] = ':'.join([baremetal['host'],
                                            baremetal['ssh_key'],
                                            baremetal['dir']])
@@ -112,7 +111,7 @@ def make_sacred(ex, worker_name, worker_fn):
     def run(base_config, ray_server, exp_name, spec):
         ray.init(redis_address=ray_server)
         tune.register_trainable(worker_name, functools.partial(worker_fn, base_config))
-        exp_id = f'{exp_name}/{utils.make_timestamp()}'
+        exp_id = f'{ex.path}/{exp_name}/{utils.make_timestamp()}'
         return tune.run_experiments({exp_id: spec})
 
     return run
