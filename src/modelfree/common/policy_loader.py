@@ -3,6 +3,7 @@
 import logging
 import os
 import pickle
+import sys
 
 from stable_baselines import PPO1, PPO2, SAC
 from stable_baselines.common.vec_env.vec_normalize import VecNormalize
@@ -31,7 +32,14 @@ def load_stable_baselines(cls):
         denv = FakeSingleSpacesVec(env, agent_id=index)
         model_path = os.path.join(root_dir, 'model.pkl')
         pylog.info(f"Loading Stable Baselines policy for '{cls}' from '{model_path}'")
+
+        # TODO: REMOVE THIS! Backwards compatibility hack.
+        # Renamed modelfree.scheduling->modelfree.training.scheduling.
+        # But old pickled policies still expect modelfree.scheduling to exist.
+        import modelfree.training.scheduling  # noqa: F401
+        sys.modules['modelfree.scheduling'] = sys.modules['modelfree.training.scheduling']
         model = cls.load(model_path, env=denv)
+        del sys.modules['modelfree.scheduling']
 
         try:
             vec_normalize = VecNormalize(denv, training=False)
