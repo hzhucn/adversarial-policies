@@ -2,17 +2,17 @@
 
 Only cursory 'smoke' checks -- there are plenty of errors this won't catch."""
 
-import json
 import os
 
 import pytest
 from ray.tune.trial import Trial
 
 from modelfree.common.policy_loader import AGENT_LOADERS
+from modelfree.multi.score import multi_score_ex
 from modelfree.multi.train import multi_train_ex
 from modelfree.score_agent import score_ex
+from modelfree.train import NO_VECENV, RL_ALGOS, train_ex
 from modelfree.train_and_score import train_and_score
-from modelfree.training import NO_VECENV, RL_ALGOS, train_ex
 
 EXPERIMENTS = [score_ex, train_and_score, train_ex]
 
@@ -53,11 +53,6 @@ def test_score_agent(config):
     ties = run.result['ties']
     win_a, win_b = run.result['wincounts']
     assert sum([ties, win_a, win_b]) == run.config['episodes']
-
-
-def load_json(fname):
-    with open(fname) as f:
-        return json.load(f)
 
 
 TRAIN_CONFIGS = [
@@ -110,16 +105,19 @@ def test_train(config):
     assert os.path.isfile(os.path.join(final_dir, 'model.pkl')), "model weights not saved"
 
 
-def test_hyper():
-    """Smoke test for hyperparameter search."""
-    config = {
+MULTI_EXPERIMENTS = [multi_score_ex, multi_train_ex]
+
+
+@pytest.mark.parametrize('ex', MULTI_EXPERIMENTS)
+def test_multi(ex):
+    multi_config = {
         'spec': {
             'resources_per_trial': {'cpu': 2},  # Travis only has 2 cores
             'upload_dir': None,  # do not upload test results anywhere
             'sync_function': None,  # as above
         },
     }
-    run = multi_train_ex.run(config_updates=config)
+    run = ex.run(config_updates=multi_config, named_configs=('debug_config',))
     trials = run.result
     for trial in trials:
         assert isinstance(trial, Trial)
