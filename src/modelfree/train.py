@@ -25,7 +25,7 @@ from modelfree.training.logger import setup_logger
 from modelfree.training.scheduling import ConstantAnnealer, Scheduler
 from modelfree.training.shaping_wrappers import apply_reward_wrapper, apply_victim_wrapper
 
-train_ex = Experiment('training')
+train_ex = Experiment('train')
 pylog = logging.getLogger('modelfree.training')
 
 
@@ -374,7 +374,7 @@ def train(_run, root_dir, exp_name, num_env, rl_algo, learning_rate, log_output_
 
 
 def main():
-    observer = FileStorageObserver.create(osp.join('data', 'sacred', 'training'))
+    observer = FileStorageObserver.create(osp.join('data', 'sacred', 'train'))
     train_ex.observers.append(observer)
     train_ex.run_commandline()
 

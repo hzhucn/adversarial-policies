@@ -25,10 +25,15 @@ def announce_winner(sim_stream):
 
 
 def get_empirical_score(_run, env, agents, episodes, render=False):
-    result = {
-        'ties': 0,
-        'wincounts': [0] * len(agents)
-    }
+    """Computes number of wins for each agent and ties.
+
+    :param env: (gym.Env) environment
+    :param agents: (list<BaseModel>) agents/policies to execute.
+    :param episodes: (int) number of episodes.
+    :param render: (bool) whether to render to screen during simulation.
+    :return a dictionary mapping from 'winN' to wins for each agent N, and 'ties' for ties."""
+    result = {f'win{i}': 0 for i in range(len(agents))}
+    result['ties'] = 0
 
     # This tells sacred about the intermediate computation so it
     # updates the result as the experiment is running
@@ -38,7 +43,7 @@ def get_empirical_score(_run, env, agents, episodes, render=False):
         if winner is None:
             result['ties'] += 1
         else:
-            result['wincounts'][winner] += 1
+            result[f'win{winner}'] += 1
         if ep + 1 >= episodes:
             break
 
