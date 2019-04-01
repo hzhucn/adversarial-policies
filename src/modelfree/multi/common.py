@@ -8,6 +8,7 @@ import functools
 import getpass
 import os
 import os.path as osp
+import shlex
 import socket
 import subprocess
 import urllib
@@ -40,6 +41,7 @@ def _rsync_func(local_dir, remote_uri):
     # balk if destination directory does not exist; so no easy way to do that.
     remote_host, ssh_key, *remainder = remote_uri.split(':')
     remote_dir = ':'.join(remainder)  # remote directory may contain :
+    remote_dir = shlex.quote(remote_dir)  # make safe for SSH/rsync call
 
     ssh_command = ['ssh', '-o', 'StrictHostKeyChecking=no', '-i', ssh_key]
     ssh_mkdir = ssh_command + [remote_host, 'mkdir', '-p', remote_dir]
