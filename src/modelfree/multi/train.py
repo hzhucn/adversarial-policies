@@ -47,7 +47,7 @@ def debug_config():
 
 @multi_train_ex.main
 def multi_train(train):
-    run(base_config=train)
+    return run(base_config=train)
 
 
 def main():

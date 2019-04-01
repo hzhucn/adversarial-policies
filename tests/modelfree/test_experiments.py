@@ -50,9 +50,8 @@ def test_score_agent(config):
     run = score_ex.run(config_updates=config)
     assert run.status == 'COMPLETED'
 
-    ties = run.result['ties']
-    win_a, win_b = run.result['wincounts']
-    assert sum([ties, win_a, win_b]) == run.config['episodes']
+    outcomes = [run.result[k] for k in ['ties', 'win0', 'win1']]
+    assert sum(outcomes) == run.config['episodes']
 
 
 TRAIN_CONFIGS = [
@@ -99,7 +98,10 @@ def test_train(config):
     # Use a small number of steps to keep things quick
     config['batch_size'] = 512
     config['total_timesteps'] = 1024
+
     run = train_ex.run(config_updates=config)
+    assert run.status == 'COMPLETED'
+
     final_dir = run.result
     assert os.path.isdir(final_dir), "final result not saved"
     assert os.path.isfile(os.path.join(final_dir, 'model.pkl')), "model weights not saved"
@@ -108,8 +110,7 @@ def test_train(config):
 MULTI_EXPERIMENTS = [multi_score_ex, multi_train_ex]
 
 
-@pytest.mark.parametrize('ex', MULTI_EXPERIMENTS)
-def test_multi(ex):
+def _test_multi(ex):
     multi_config = {
         'spec': {
             'resources_per_trial': {'cpu': 2},  # Travis only has 2 cores
@@ -117,7 +118,21 @@ def test_multi(ex):
             'sync_function': None,  # as above
         },
     }
+
     run = ex.run(config_updates=multi_config, named_configs=('debug_config',))
+    assert run.status == 'COMPLETED'
+
+    return run
+
+
+def test_multi_score():
+    run = _test_multi(multi_score_ex)
+    assert isinstance(run.result, dict)
+
+
+def test_multi_train():
+    run = _test_multi(multi_train_ex)
+
     trials = run.result
     for trial in trials:
         assert isinstance(trial, Trial)
