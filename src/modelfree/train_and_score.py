@@ -7,7 +7,7 @@ from sacred.observers import FileStorageObserver
 
 from modelfree import training
 from modelfree.score_agent import score_agent, score_ex
-from modelfree.training import train_ex
+from modelfree.train import train_ex
 
 train_and_score = Experiment('train_and_score', ingredients=[train_ex, score_ex])
 

@@ -26,7 +26,7 @@ from modelfree.training.scheduling import ConstantAnnealer, Scheduler
 from modelfree.training.shaping_wrappers import apply_reward_wrapper, apply_victim_wrapper
 
 train_ex = Experiment('train')
-pylog = logging.getLogger('modelfree.training')
+pylog = logging.getLogger('modelfree.train')
 
 
 class EmbedVictimWrapper(VecMultiWrapper):
