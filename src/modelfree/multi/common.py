@@ -114,6 +114,8 @@ def make_sacred(ex, worker_name, worker_fn):
         ray.init(redis_address=ray_server)
         tune.register_trainable(worker_name, functools.partial(worker_fn, base_config))
         exp_id = f'{ex.path}/{exp_name}/{utils.make_timestamp()}'
-        return tune.run_experiments({exp_id: spec})
+        result = tune.run_experiments({exp_id: spec})
+        ray.shutdown()  # run automatically on exit, but needed here to not break tests
+        return result
 
     return run
