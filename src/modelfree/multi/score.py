@@ -23,14 +23,8 @@ run = common.make_sacred(multi_score_ex, 'score', score_worker)
 make_configs(multi_score_ex)
 
 
-# TODO: add test case
-
 @multi_score_ex.config
 def default_config(score):
-    score = dict(score)
-    score['render'] = False
-    score['videos'] = False
-
     spec = {  # experiment specification
         'run': 'score',
         # TODO: tune number of actual CPUs required
@@ -38,6 +32,15 @@ def default_config(score):
     }
 
     save_path = None      # path to save JSON results. If None, do not save.
+
+    _ = locals()  # quieten flake8 unused variable warning
+    del _
+
+
+@score_ex.config
+def score_config():
+    render = False
+    videos = False
 
     _ = locals()  # quieten flake8 unused variable warning
     del _
